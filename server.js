@@ -1,24 +1,23 @@
 const express = require('express');
-const { connectToDatabase } = require("./database");
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const app = express();
-const registerRoutes = require('./routes');
+const Routes = require('./userRoutes')
 
-registerRoutes(app);
+// Middleware
+app.use(express.json());
 
-const startServer = async () => {
-  try {
-  
-    await connectToDatabase();
-    console.log("Connected to MongoDB!");
+// Connect to MongoDB
+const uri =       "mongodb+srv://ehabe:Madman9905@ehabe1.4ns6y.mongodb.net/?retryWrites=true&w=majority&appName=ehabe1"
 
-    app.listen(3000, () => {
-      console.log('Server is running on http://localhost:3000');
-    });
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    process.exit(1); 
-  }
-};
+const port = 3000;
 
-startServer();
+mongoose.connect(uri)
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.log(err));
+
+// Routes
+
+app.use('/', Routes)
+app.listen(port,
+    () => console.log(`Server running on port ${port}`)
+);
